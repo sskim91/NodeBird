@@ -1,0 +1,23 @@
+{
+  "name": "nodebird-call",
+  "version": "0.0.1",
+  "description": "NodeBird API를 사용하는 호출서버",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sskim91",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "cookie-parser": "^1.4.4",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "morgan": "^1.9.1",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

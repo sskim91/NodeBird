@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/main.css">
+</head>
+
+<body>
+<div class="container">
+    <div class="profile-wrap">
+        <div class="profile">
+            {% if user %}
+            <div class="user-name">안녕하세요.{{ user.nick }}님</div>
+            <div class="half">
+                <div>팔로잉</div>
+                <div class="count following-count">{{ user.Followings and user.Followings.length }}</div>
+            </div>
+            <div class="half">
+                <div>팔로워</div>
+                <div class="count following-count">{{ user.Followers and user.Followers.length }}</div>
+            </div>
+            <input type="hidden" id="my-id" value="{{ user.id }}">
+            <a href="/profile" id="my-profile">내 프로필</a>
+            <a href="/auth/logout">로그아웃</a>
+            {% else %}
+            <form id="login-form" action="/auth/login" method="post">
+                <div class="input-group">
+                    <label for="email">이메일</label>
+                    <input id="email" type="email" name="email" required autofocus>
+                </div>
+                <div class="input-group">
+                    <label for="password">비밀번호</label>
+                    <input id="password" type="password" name="password" required>
+                </div>
+                <a class="btn" id="join" href="/join">회원가입</a>
+                <button class="btn" id="login" type="submit">로그인</button>
+                <a class="btn" id="kakao" href="/auth/kakao">카카오톡</a>
+            </form>
+            {% endif %}
+        </div>
+        <footer>Made by&nbsp;<a href="https://www.github.com/sskim91" target="_blank">sskim91</a></footer>
+    </div>
+    {% block content %}{% endblock %}
+</div>
+</body>
+
+</html>

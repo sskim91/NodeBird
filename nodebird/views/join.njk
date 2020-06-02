@@ -1,0 +1,24 @@
+{% extends 'layout.njk' %}
+
+{% block content %}
+    <div class="timeline" style="border: 1px solid silver;">
+        <form id="join-form" action="/auth/join" method="post">
+            <div class="input-group">
+                <label for="join-email">이메일</label>
+                <input id="join-email" type="email" name="email"/>
+            </div>
+            <div class="input-group">
+                <label for="join-nick">닉네임</label>
+                <input id="join-nick" type="text" name="nick"/>
+            </div>
+            <div class="input-group">
+                <label for="join-password">비밀번호</label>
+                <input id="join-password" type="password" name="password"/>
+            </div>
+            {% if joinError %}
+                <div class="error-message">{{ joinError }}</div>
+            {% endif %}
+            <button class="btn" id="join-btn" type="submit">회원가입</button>
+        </form>
+    </div>
+{% endblock %}

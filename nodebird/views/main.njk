@@ -1,0 +1,89 @@
+{% extends 'layout.njk' %}
+
+{% block content %}
+    <div class="timeline">
+        {% if user %}
+            <form id="twit-form" action="/post" method="post" enctype='multipart/form-data'>
+                <div class="input-group"></div>
+                <textarea id="twit" name="content" maxlength="140"></textarea>
+                <div class="img-preview">
+                    <img id="img-preview" src="" style="display: none;" width="250" alt="미리보기"/>
+                    <input id="img-url" type="hidden" name="url"/></div>
+                <div>
+                    <label id="img-label" for="img">사진 업로드</label>
+                    <input id="img" type="file" accept="image/*"/>
+                    <button class="btn" id="twit-btn" type="submit">짹짹</button>
+                </div>
+            </form>
+        {% endif %}
+        <div class="twits">
+            <form action="/post/hashtag" id="hashtag-form">
+                <input type="text" name="hashtag" placeholder="태그 검색">
+                <button class="btn">검색</button>
+            </form>
+            {% for twit in twits %}
+				<div class="twit">
+					<input type="hidden" class="twit-user-id" value="{{ twit.user.id }}">
+					<input type="hidden" class="twit-id" value="{{ twit.id }}">
+					<div class="twit-author">{{ twit.user.nick }}</div>
+					{% if user and user.id !== twit.user.id %}
+						<button class="twit-follow">팔로우하기</button>
+					{% endif %}
+					<div class="twit-content">{{ twit.content }}</div>
+					{% if twit.img %}
+						<div class="twit-img">
+							<img src="{{ twit.img }}" alt="섬네일">
+						</div>
+					{% endif %}
+				</div>
+            {% endfor %}
+        </div>
+
+
+        <script>
+			if (document.getElementById('img')) {
+				document.getElementById('img').addEventListener('change', function (e) {
+					var formData = new FormData();
+					console.log(this, this.files);
+					formData.append('img', this.files[0]);
+					var xhr = new XMLHttpRequest();
+					xhr.onload = function () {
+						if (xhr.status === 200) {
+							var url = JSON.parse(xhr.responseText).url;
+							document.getElementById('img-url').value = url;
+							document.getElementById('img-preview').src = url;
+							document.getElementById('img-preview').style.display = 'inline';
+						} else {
+							console.error(xhr.responseText);
+						}
+					};
+					xhr.open('POST', '/post/img');
+					xhr.send(formData);
+				});
+			}
+			document.querySelectorAll('.twit-follow').forEach(function (tag) {
+				tag.addEventListener('click', function () {
+					var isLoggedIn = document.querySelector('#my-id');
+					if (isLoggedIn) {
+						var userId = tag.parentNode.querySelector('.twit-user-id').value;
+						var myId = isLoggedIn.value;
+						if (userId !== myId) {
+							if (confirm('팔로잉하시겠습니까?')) {
+								var xhr = new XMLHttpRequest();
+								xhr.onload = function () {
+									if (xhr.status === 200) {
+										location.reload();
+									} else {
+										console.error(xhr.responseText);
+									}
+								};
+								xhr.open('POST', '/user/' + userId + '/follow');
+								xhr.send();
+							}
+						}
+					}
+				});
+			});
+        </script>
+    </div>
+{% endblock %}
