@@ -4,6 +4,7 @@
   "description": "NodeBird API를 사용하는 호출서버",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon app -e njk,js,css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sskim91",
@@ -15,7 +16,7 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "morgan": "^1.9.1",
-    "pug": "^2.0.3"
+    "nunjucks": "^3.2.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

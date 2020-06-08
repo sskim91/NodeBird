@@ -2,7 +2,6 @@
 /nodebird/node_modules/
 /nodebird-api/node_modules/
 /nodebird-call/node_modules/
-*.env
 package-lock.json
 .idea
-
+.env

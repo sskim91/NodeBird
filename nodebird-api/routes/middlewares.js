@@ -1,11 +1,7 @@
-/**
- * 라우터 접근 권한 설정이 필요하다.
- * 로그인한 사용자는 회원가입과 로그인 라우터에 접근하면 안됨.
- * 반대로 로그인하지 않은 사용자는 로그아웃 라우터에 접근하면 안된다.
- */
+const jwt = require('jsonwebtoken');
+const RateLimit = require('express-rate-limit');
+
 exports.isLoggedIn = (req, res, next) => {
-	//Pssport는 req 객체에 isAuthenticated 메서드를 추가하는데
-	//로그인 중이면 true 아니면 falseㄹ르 반환한다.
 	if (req.isAuthenticated()) {
 		next();
 	} else {
@@ -23,19 +19,37 @@ exports.isNotLoggedIn = (req, res, next) => {
 
 exports.verifyToken = (req, res, next) => {
 	try {
-		//요청 헤더에 저장된 토큰(req.headers.authorization)을 사용한다.
-		//사용자가 쿠키처럼 헤더에 토큰을 넣어 보낸다.
-		req.decoded(jwt.verify(req.headers.authorization, process.env.JWT_SECRET));
+		req.decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
+		return next();
 	} catch (error) {
-		if (error.name === 'TokenExpiredError') {
+		if (error.name === 'TokenExpiredError') { // 유효기간 초과
 			return res.status(419).json({
 				code: 419,
-				message: '토근이 만료되었습니다.'
+				message: '토큰이 만료되었습니다',
 			});
 		}
 		return res.status(401).json({
 			code: 401,
-			message: '유효하지 않은 토큰입니다.'
+			message: '유효하지 않은 토큰입니다',
 		});
 	}
+};
+
+exports.apiLimiter = new RateLimit({
+  windowMs: 60 * 1000, // 1분    기준시간
+  max: 1,   //허용 횟수
+  delayMs: 0,   //호출 간격
+  handler(req, res) {   //제한 초과 시 콜백함수
+    res.status(this.statusCode).json({
+      code: this.statusCode, // 기본값 429
+      message: '1분에 한 번만 요청할 수 있습니다.',
+    });
+  },
+});
+
+exports.deprecated = (req, res) => {
+  res.status(410).json({
+    code: 410,
+    message: '새로운 버전이 나왔습니다. 새로운 버전을 사용하세요.',
+  });
 };
