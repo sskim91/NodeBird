@@ -1,10 +1,28 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
+const url = require('url');
 
 const {verifyToken, apiLimiter} = require('./middlewares');
 const {Domain, User, Post, Hashtag} = require('../models');
 
 const router = express.Router();
+
+//응답 헤더에 Access-Control-Allow-Origin 이라는 헤더를 넣는다.
+//이 헤더는 클라이언트 도메인의 요청을 허락하겠다는 뜻을 가지고 있다.
+//응답은 서버가 보내주는 것
+// router.use(cors());
+
+router.use(async (req, res, next) => {
+	const domain = await Domain.findOne({
+		where: {host: url.parse(req.get('origin')).host},
+	});
+	if (domain) {
+		cors({origin: req.get('origin')})(req, res, next);
+	} else {
+		next();
+	}
+});
 
 router.post('/token', apiLimiter, async (req, res) => {
 	const {clientSecret} = req.body;
